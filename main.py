@@ -6,7 +6,6 @@ from discord.ext import commands
 import discord
 import random
 import asyncio
-from always_on import keep_alive
 import requests
 import json
 import keyfinder
@@ -119,7 +118,5 @@ async def literallyme(ctx):
     embed = discord.Embed()
     embed.set_image(url='https://media1.tenor.com/m/uSCuWHveNmEAAAAC/you-look-lonely-hologram.gif') 
     await ctx.send(embed=embed)
-    
-keep_alive()
 
 bot.run(os.getenv("TOKEN"))
