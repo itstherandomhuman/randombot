@@ -1,0 +1,37 @@
+name: bot-run
+
+on:
+  schedule:
+    - cron: '0 */5 * * *'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          STRIPE: ${{ secrets.STRIPE }}
+          SESSION: ${{ secrets.SESSION }}
+          CSRF: ${{ secrets.CSRF }}
+        run: |
+          export CONDITION="IM_THE_REASON"
+          touch "$CONDITION"
+          while [[ -f "$CONDITION" ]]; do
+            python3 main.py
+            git pull
+          done
+

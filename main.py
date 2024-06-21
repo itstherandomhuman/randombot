@@ -21,6 +21,9 @@ async def on_ready():
     print(f"logged as {bot.user}")
     await bot.change_presence(activity=discord.Game(".bothelp for help with bot"))
     await bot.tree.sync()
+    await asyncio.sleep(5*60*60)
+    os.remove(os.environ["CONDITION"])
+    await bot.close()
 
 @bot.command(help = "Detailed help on bot.")
 async def bothelp(ctx):
