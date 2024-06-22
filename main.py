@@ -6,7 +6,6 @@ from discord.ext import commands
 import discord
 import random
 import asyncio
-from always_on import keep_alive
 import requests
 import json
 import keyfinder
