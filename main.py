@@ -18,6 +18,12 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='.', intents=intents)
 
+cookies = {
+    '__stripe_mid': os.getenv("STRIPE"),
+    'reddit_session': os.getenv("SESSION"),
+    'csrf_token': os.getenv("CSRF"),
+}
+
 
 @bot.event
 async def on_ready():
@@ -57,20 +63,20 @@ async def bothelp(ctx):
                     inline=True)
 
     embed.add_field(
-        name="/copypasta",
+        name="copypasta",
         value=
-        "syntax: /copypasta {listing} {timeframe}. timeframe can be week, month or all and listing is like top or random.",
+        "syntax: copypasta {listing} {timeframe}. timeframe can be week, month or all and listing is like top or random.",
         inline=True)
 
     await ctx.send(embed=embed)
 
 
-@bot.hybrid_command()
+@bot.command()
 async def wsg(ctx):
-    await ctx.reply('wsg bbg')
+    await ctx.send('wsg bbg')
 
 
-@bot.hybrid_command(name='8ball', help="Magic 8 ball to ask questions.")
+@bot.command(name='8ball', help="Magic 8 ball to ask questions.")
 async def magic8ball(ctx, *, question):
     responses = [
         "It is certain.", "It is decidedly so.", "Without a doubt.",
@@ -85,7 +91,7 @@ async def magic8ball(ctx, *, question):
     await ctx.reply(final)
 
 
-@bot.hybrid_command(help="Spams messages.")
+@bot.command(help="Spams messages.")
 async def spam(ctx, count: int, *, message):
     if count > 100:
         await ctx.send("That's too big!")
@@ -98,13 +104,14 @@ async def spam(ctx, count: int, *, message):
 async def embed(ctx):
     # Create an initial embed
     embed = discord.Embed(title="Original Embed",
-                          description="This is the original content.")
+                          description="This is the original content.", color=discord.Color(0xA6BE22))
     message = await ctx.send(embed=embed)
     # After some time, edit the embed
     await asyncio.sleep(5)
     new_embed = discord.Embed(title="Updated Embed",
                               description="This is the updated content.")
     await message.edit(embed=new_embed)
+
 
 @bot.hybrid_command(help="Gets a copypasta.")
 async def copypasta(interaction, listing: str = None, time: str = None):
