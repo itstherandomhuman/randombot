@@ -34,7 +34,7 @@ async def on_ready():
     await bot.tree.sync()
 
 
-@bot.command(help="Detailed help on bot.")
+@bot.hybrid_command(help="Detailed help on bot.")
 async def bothelp(ctx):
     embed = discord.Embed(title="RandomBot Help",
                           description="here's a list of available commands:",
