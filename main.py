@@ -64,12 +64,12 @@ async def bothelp(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command()
+@bot.hybrid_command()
 async def wsg(ctx):
-    await ctx.send('wsg bbg')
+    await ctx.reply('wsg bbg')
 
 
-@bot.command(name='8ball', help="Magic 8 ball to ask questions.")
+@bot.hybrid_command(name='8ball', help="Magic 8 ball to ask questions.")
 async def magic8ball(ctx, *, question):
     responses = [
         "It is certain.", "It is decidedly so.", "Without a doubt.",
@@ -84,7 +84,7 @@ async def magic8ball(ctx, *, question):
     await ctx.reply(final)
 
 
-@bot.command(help="Spams messages.")
+@bot.hybrid_command(help="Spams messages.")
 async def spam(ctx, count: int, *, message):
     if count > 100:
         await ctx.send("That's too big!")
@@ -105,16 +105,9 @@ async def embed(ctx):
                               description="This is the updated content.")
     await message.edit(embed=new_embed)
 
-
-@bot.command(help="Gets a copypasta.")
+@bot.hybrid_command(help="Gets a copypasta.")
 async def copypasta(interaction, listing: str = None, time: str = None):
     global count
-
-    cookies = {
-        '__stripe_mid': os.getenv("STRIPE"),
-        'reddit_session': os.getenv("SESSION"),
-        'csrf_token': os.getenv("CSRF"),
-    }
 
     loop = True
     while loop == True:
@@ -132,19 +125,39 @@ async def copypasta(interaction, listing: str = None, time: str = None):
             loop = False
     await interaction.send(pasta[count - 1])
 
+#https://www.reddit.com/r/catpics/random.json
+@bot.command(help="Gets a cat.")
+async def cat(ctx):
+    global countcat
+
+    loop = True
+    while loop == True:
+        response = requests.get(
+            f'https://www.reddit.com/r/catpics/random.json',
+            cookies=cookies,
+        )
+        print(response)
+        if response.status_code == 200:
+            data = response.json()
+            cat = keyfinder.keyfind(data, keyword="url_overridden_by_dest")
+            print(cat[countcat])
+            count = countcat + 1
+            print(count)
+            loop = False
+    await ctx.reply(cat[countcat - 1])
 
 #funnies
-@bot.command()
+@bot.hybrid_command()
 async def rickroll(ctx):
-    embed = discord.Embed()
+    embed = discord.Embed(color=discord.Color(0xA6BE22))
     embed.set_image(
         url='https://media1.tenor.com/m/x8v1oNUOmg4AAAAd/rickroll-roll.gif')
     await ctx.send(embed=embed)
 
 
-@bot.command()
+@bot.hybrid_command()
 async def literallyme(ctx):
-    embed = discord.Embed()
+    embed = discord.Embed(color=discord.Color(0xA6BE22))
     embed.set_image(
         url=
         'https://media1.tenor.com/m/uSCuWHveNmEAAAAC/you-look-lonely-hologram.gif'
