@@ -11,6 +11,7 @@ import json
 import keyfinder
 
 count = 0
+countcat = 0
 
 intents = discord.Intents.default()
 intents.message_content = True
