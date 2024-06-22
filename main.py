@@ -151,7 +151,4 @@ async def literallyme(ctx):
     )
     await ctx.send(embed=embed)
 
-
-keep_alive()
-
 bot.run(os.getenv("TOKEN"))
