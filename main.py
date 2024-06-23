@@ -76,7 +76,7 @@ async def wsg(ctx):
     await ctx.send('wsg bbg')
 
 
-@bot.command(name='8ball', help="Magic 8 ball to ask questions.")
+@bot.hybrid_command(name='8ball', help="Magic 8 ball to ask questions.")
 async def magic8ball(ctx, *, question):
     responses = [
         "It is certain.", "It is decidedly so.", "Without a doubt.",
@@ -91,7 +91,7 @@ async def magic8ball(ctx, *, question):
     await ctx.reply(final)
 
 
-@bot.command(help="Spams messages.")
+@bot.hybrid_command(help="Spams messages.")
 async def spam(ctx, count: int, *, message):
     if count > 100:
         await ctx.send("That's too big!")
@@ -134,7 +134,7 @@ async def copypasta(interaction, listing: str = None, time: str = None):
     await interaction.send(pasta[count - 1])
 
 #https://www.reddit.com/r/catpics/random.json
-@bot.command(help="Gets a cat.")
+@bot.hybrid_command(help="Gets a cat.")
 async def cat(ctx):
     global countcat
 
