@@ -32,6 +32,9 @@ async def on_ready():
     await bot.change_presence(
         activity=discord.Game(".bothelp for help with bot"))
     await bot.tree.sync()
+    await asyncio.sleep(5*60*60)
+    os.remove(os.environ["CONDITION"])
+    await bot.close()
 
 
 @bot.hybrid_command(help="Detailed help on bot.")
