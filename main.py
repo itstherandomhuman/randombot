@@ -17,7 +17,8 @@ countcat = 0
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='.', intents=intents)
+prefixes = ['@TheRandomBot', 'RandomBot', '.']
+bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
 cookies = {
     '__stripe_mid': os.getenv("STRIPE"),
