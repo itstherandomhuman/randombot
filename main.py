@@ -9,6 +9,7 @@ import asyncio
 import requests
 import json
 import keyfinder
+import google.generativeai as genai
 
 count = 0
 countcat = 0
@@ -23,6 +24,11 @@ cookies = {
     'reddit_session': os.getenv("SESSION"),
     'csrf_token': os.getenv("CSRF"),
 }
+
+GOOGLE_API_KEY = os.getenv('GOOGLE_KEY')
+genai.configure(api_key=GOOGLE_API_KEY)
+
+model = genai.GenerativeModel('models/gemini-1.5-flash')
 
 
 @bot.event
@@ -93,6 +99,21 @@ async def magic8ball(ctx, *, question):
     final = random.choice(responses)
     await ctx.reply(final)
 
+@bot.hybrid_command()
+async def talk(ctx, *, input):
+    response = model.generate_content(input).text
+    response = response.replace('@everyone', 'naughty ping word')
+    response = response.replace('@here', 'naughty ping word')
+    print(response)
+    responsetext = len(response)
+    if responsetext >= 2000:
+        responsechunk = round(responsetext/6)
+        for i in range(responsechunk):
+            x = i*2000
+            y = (i+1)*2000
+            await ctx.send(response[x:y])
+    else:
+        await ctx.send(response)
 
 @bot.hybrid_command(help="Spams messages.")
 async def spam(ctx, count: int, *, message):
