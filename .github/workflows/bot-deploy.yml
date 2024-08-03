@@ -27,6 +27,7 @@ jobs:
           STRIPE: ${{ secrets.STRIPE }}
           SESSION: ${{ secrets.SESSION }}
           CSRF: ${{ secrets.CSRF }}
+          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
         run: |
           export CONDITION="IM_THE_REASON"
           touch "$CONDITION"
