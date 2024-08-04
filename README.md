@@ -1,2 +1,2 @@
-# TheRandomBot (By TheRandomHuman)
+# TheRandomBot
 Sigma bot
