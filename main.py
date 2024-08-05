@@ -29,7 +29,7 @@ cookies = {
 GOOGLE_API_KEY = os.getenv('GOOGLE_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
 
-model = genai.GenerativeModel('models/gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-1.5-pro',safety_settings={'HARASSMENT':'block_none','SEXUALLY_EXPLICIT': 'block_none','HATE_SPEECH': 'block_none',})
 
 
 @bot.event
