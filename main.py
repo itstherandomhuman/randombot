@@ -1,5 +1,4 @@
-# This code is based on the following example:
-# https://discordpy.readthedocs.io/en/stable/quickstart.html#a-minimal-bot
+# Code for TheRandomBot, supporting AI commands, Reddit API and other stuff.
 
 import os
 from discord.ext import commands
