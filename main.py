@@ -28,8 +28,10 @@ cookies = {
 GOOGLE_API_KEY = os.getenv('GOOGLE_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
 
-model = genai.GenerativeModel('gemini-1.5-pro',safety_settings={'HARASSMENT':'block_none','SEXUALLY_EXPLICIT': 'block_none','HATE_SPEECH': 'block_none',})
-
+#specify the model
+model = genai.GenerativeModel('gemini-1.5-pro', system_instruction = 'You are a friendly bot who can respond to anything in a quick and easy to understand manner. Your responses are formatted in the markdown system as if you were writing in a discord chat. Your creator is TheRandomHuman. Whenever you are asked a question that requires you to make a decision, you have to make a decision.')
+#start a chat
+chat = model.start_chat()
 
 @bot.event
 async def on_ready():
@@ -71,6 +73,22 @@ async def bothelp(ctx):
                     value="syntax: .rickroll. You get rickrolled (L Bozo).",
                     inline=True)
 
+    embed.add_field(name="talk",
+        value="syntax: .talk. Chat with the Gemini AI.",
+        inline=True)
+
+    embed.add_field(name="cat",
+        value="syntax: .cat. Summons random cat image.",
+        inline=True)
+
+    embed.add_field(name="rickroll",
+        value="syntax: .rickroll. Dead meme ressurection.",
+        inline=True)
+    
+    embed.add_field(name="literally me",
+        value="syntax: .literallyme. Real gif.",
+        inline=True)
+
     embed.add_field(
         name="copypasta",
         value=
@@ -99,9 +117,13 @@ async def magic8ball(ctx, *, question):
     final = random.choice(responses)
     await ctx.reply(final)
 
+#Talk command
 @bot.hybrid_command()
 async def talk(ctx, *, input):
-    response = model.generate_content(input).text
+    channelid = ctx.channel.id
+    channel = await bot.fetch_channel(channelid)
+    await channel.typing()
+    response = chat.send_message(input).text
     response = response.replace('@everyone', 'naughty ping word')
     response = response.replace('@here', 'naughty ping word')
     print(response)
@@ -114,6 +136,38 @@ async def talk(ctx, *, input):
             await ctx.send(response[x:y])
     else:
         await ctx.send(response)
+
+#respond with AI
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return  # Ignore messages sent by the bot itself
+    if message.content[:1] == "$":
+        await bot.process_commands(message)
+        return
+    else:
+        if message.reference:
+            # This message is a reply
+            replied_to_message = await message.channel.fetch_message(message.reference.message_id)
+            # Now you have the `replied_to_message` object
+            print(f"{message.author} replied to: {replied_to_message.content}") 
+            # Do something specific when the bot is replied tochannelid = ctx.channel.id
+            channelid = message.channel.id
+            channel = await bot.fetch_channel(channelid)
+            await channel.typing()
+            response = chat.send_message(message.content).text
+            response = response.replace('@everyone', 'naughty ping word')
+            response = response.replace('@here', 'naughty ping word')
+            print(response)
+            responsetext = len(response)
+            if responsetext >= 2000:
+                responsechunk = round(responsetext/6)
+                for i in range(responsechunk):
+                    x = i*2000
+                    y = (i+1)*2000
+                    await ctx.send(response[x:y])
+            else:
+                await message.reply(response)
 
 @bot.hybrid_command(help="Spams messages.")
 async def spam(ctx, count: int, *, message):
