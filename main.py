@@ -44,6 +44,12 @@ async def on_ready():
     os.remove(os.environ["CONDITION"])
     await bot.close()
 
+#I steal hakurei command mwa hahah ahaha ahhhhaaaa
+@bot.command(name="reboot", help="github go brrr")
+async def reboot(ctx: commands.Context):
+    await ctx.send(content="rip")
+    await bot.close()
+
 
 @bot.hybrid_command(help="Detailed help on bot.")
 async def bothelp(ctx):
