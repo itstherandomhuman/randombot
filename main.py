@@ -140,18 +140,19 @@ async def talk(ctx, *, input):
 #respond with AI
 @bot.event
 async def on_message(message):
+    if message.reference:
+        whoreplied = await message.channel.fetch_message(message.reference.message_id)
+        authorofmessage = whoreplied.author
+    else:
+        print("Message not directed to anyone.")
+        authorofmessage = None
     if message.author == bot.user:
         return  # Ignore messages sent by the bot itself
     if message.content[:1] == "$":
         await bot.process_commands(message)
         return
     else:
-        if message.reference:
-            # This message is a reply
-            replied_to_message = await message.channel.fetch_message(message.reference.message_id)
-            # Now you have the `replied_to_message` object
-            print(f"{message.author} replied to: {replied_to_message.content}") 
-            # Do something specific when the bot is replied tochannelid = ctx.channel.id
+        if authorofmessage == bot.user:
             channelid = message.channel.id
             channel = await bot.fetch_channel(channelid)
             await channel.typing()
