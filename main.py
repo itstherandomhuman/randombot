@@ -29,7 +29,7 @@ GOOGLE_API_KEY = os.getenv('GOOGLE_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
 
 #specify the model
-model = genai.GenerativeModel('gemini-1.5-pro', system_instruction = 'You are a friendly bot who can respond to anything in a quick and easy to understand manner. Your responses are formatted in the markdown system as if you were writing in a discord chat. Your creator is TheRandomHuman. Whenever you are asked a question that requires you to make a decision, you have to make a decision.')
+model = genai.GenerativeModel('gemini-1.5-pro', system_instruction = 'You are a friendly bot who can respond to anything in a quick and easy to understand manner. Your responses are formatted in the markdown system as if you were writing in a discord chat. Your creator is TheRandomHuman. Whenever you are asked a question that requires you to make a decision, you have to make a decision.', safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'})
 #start a chat
 chat = model.start_chat()
 
