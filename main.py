@@ -154,7 +154,7 @@ async def on_message(message):
         authorofmessage = None
     if message.author == bot.user:
         return  # Ignore messages sent by the bot itself
-    if message.content[:1] == "$":
+    if message.content[:1] == ".":
         await bot.process_commands(message)
         return
     else:
