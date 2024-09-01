@@ -239,6 +239,27 @@ async def cat(ctx):
             loop = False
     await ctx.reply(cat[countcat - 1])
 
+#https://www.reddit.com/r/wunkus/random.json
+@bot.hybrid_command(help="Gets a wunk (google it).")
+async def wunkus(ctx):
+    global countcat
+
+    loop = True
+    while loop == True:
+        response = requests.get(
+            f'https://www.reddit.com/r/wunkus/random.json',
+            cookies=cookies,
+        )
+        print(response)
+        if response.status_code == 200:
+            data = response.json()
+            cat = keyfinder.keyfind(data, keyword="url_overridden_by_dest")
+            print(cat[countcat])
+            count = countcat + 1
+            print(count)
+            loop = False
+    await ctx.reply(cat[countcat - 1])
+
 #funnies
 @bot.hybrid_command()
 async def rickroll(ctx):
