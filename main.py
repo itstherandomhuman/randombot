@@ -162,7 +162,7 @@ async def on_message(message):
     else:
         if authorofmessage == bot.user:
             channelid = message.channel.id
-            username = ctx.author.name
+            username = authorofmessage
             newinput = f"From: {username} - {input}"
             channel = await bot.fetch_channel(channelid)
             await channel.typing()
