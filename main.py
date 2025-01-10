@@ -127,9 +127,11 @@ async def magic8ball(ctx, *, question):
 @bot.hybrid_command()
 async def talk(ctx, *, input):
     channelid = ctx.channel.id
+    username = ctx.author.name
+    newinput = f"From: {username} - {input}"
     channel = await bot.fetch_channel(channelid)
     await channel.typing()
-    response = chat.send_message(input).text
+    response = chat.send_message(newinput, safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'}).text
     response = response.replace('@everyone', 'naughty ping word')
     response = response.replace('@here', 'naughty ping word')
     print(response)
@@ -160,9 +162,11 @@ async def on_message(message):
     else:
         if authorofmessage == bot.user:
             channelid = message.channel.id
+            username = ctx.author.name
+            newinput = f"From: {username} - {input}"
             channel = await bot.fetch_channel(channelid)
             await channel.typing()
-            response = chat.send_message(message.content).text
+            response = chat.send_message(newinput, safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'}).text
             response = response.replace('@everyone', 'naughty ping word')
             response = response.replace('@here', 'naughty ping word')
             print(response)
