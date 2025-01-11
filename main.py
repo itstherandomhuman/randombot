@@ -160,6 +160,7 @@ async def on_message(message):
         await bot.process_commands(message)
         return
     else:
+        if authorofmessage == bot.user:
             channelid = message.channel.id
             username = authorofmessage
             newinput = f"From: {username} - {input}"
