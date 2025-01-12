@@ -160,6 +160,12 @@ async def on_message(message):
         await bot.process_commands(message)
         return
     else:
+        #if someone says literally me it sends funny
+        if "literally me" in message.content.lower():
+            goslings = ["https://media1.tenor.com/m/Qu9da9ZPlnsAAAAd/blade-runner2049-literally-me.gif", "https://media1.tenor.com/m/AWH8Uy6PMuoAAAAd/nubv.gif", "https://media1.tenor.com/m/iVL9VpBhrlQAAAAd/blade-runner2049-snow.gif"] 
+            final = random.choice(goslings)
+            await message.channel.send(final)
+            
         if authorofmessage == bot.user:
             channelid = message.channel.id
             username = authorofmessage
