@@ -13,8 +13,6 @@ import google.generativeai as genai
 count = 0
 countcat = 0
 
-shit_react_billy = False
-
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -147,12 +145,6 @@ async def talk(ctx, *, input):
     else:
         await ctx.send(response)
 
-#Shit react someone
-@bot.hybrid_command()
-async def shitonbilly(ctx):
-    shit_react_billy = True
-    await ctx.send('Shit react billy on')
-
 #respond with AI
 @bot.event
 async def on_message(message):
@@ -173,10 +165,6 @@ async def on_message(message):
             goslings = ["https://media1.tenor.com/m/Qu9da9ZPlnsAAAAd/blade-runner2049-literally-me.gif", "https://media1.tenor.com/m/AWH8Uy6PMuoAAAAd/nubv.gif", "https://media1.tenor.com/m/iVL9VpBhrlQAAAAd/blade-runner2049-snow.gif"] 
             final = random.choice(goslings)
             await message.channel.send(final)
-
-        #shit react billy
-        if shit_react_billy == True and authorofmessage == '_sillybillytacos_':
-                await message.add_reaction("💩")
             
         if authorofmessage == bot.user:
             channelid = message.channel.id
