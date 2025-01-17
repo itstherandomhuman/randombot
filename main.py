@@ -169,7 +169,7 @@ async def on_message(message):
         if authorofmessage == bot.user:
             channelid = message.channel.id
             username = authorofmessage
-            newinput = f"From: {username} - {input}"
+            newinput = f"From: {username} - {message}"
             channel = await bot.fetch_channel(channelid)
             await channel.typing()
             response = chat.send_message(newinput, safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'}).text
@@ -192,6 +192,8 @@ async def spam(ctx, count: int, *, message):
         await ctx.send("That's too big!")
     else:
         for i in range(count):
+            message = message.replace('@everyone', 'naughty ping word')
+            message = message.replace('@here', 'naughty ping word')
             await ctx.send(message)
 
 
