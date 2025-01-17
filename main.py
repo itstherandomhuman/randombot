@@ -90,9 +90,17 @@ async def bothelp(ctx):
     embed.add_field(name="rickroll",
         value="syntax: .rickroll. Dead meme ressurection.",
         inline=True)
+
+    embed.add_field(name="wunkus",
+        value="syntax: .wunkus. Gets a picture of a cute animal.",
+        inline=True)
+
+    embed.add_field(name="reboot",
+        value="syntax: .reboot. Restarts the bot in the event something goes wrong or it needs an update.",
+        inline=True)
     
     embed.add_field(name="literally me",
-        value="syntax: .literallyme. Real gif.",
+        value="syntax: .literallyme. Real gif. you can also say literally me and it will respond.",
         inline=True)
 
     embed.add_field(
