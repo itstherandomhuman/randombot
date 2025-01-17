@@ -80,7 +80,7 @@ async def bothelp(ctx):
                     inline=True)
 
     embed.add_field(name="talk",
-        value="syntax: .talk. Chat with the Gemini AI.",
+        value="syntax: .talk {question}. Chat with the Gemini AI.",
         inline=True)
 
     embed.add_field(name="cat",
