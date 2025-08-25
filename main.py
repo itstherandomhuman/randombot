@@ -8,7 +8,9 @@ import asyncio
 import requests
 import json
 import keyfinder
-import google.generativeai as genai
+from google import genai
+from google.genai import types
+from google.genai.types import GenerateContentConfig, HttpOptions
 
 count = 0
 countcat = 0
@@ -16,7 +18,7 @@ countcat = 0
 intents = discord.Intents.default()
 intents.message_content = True
 
-prefixes = ['@TheRandomBot ', 'RandomBot ', '.']
+prefixes = ['<@1146722226817744926> ', 'RandomBot ', '.']
 bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
 cookies = {
@@ -25,13 +27,10 @@ cookies = {
     'csrf_token': os.getenv("CSRF"),
 }
 
-GOOGLE_API_KEY = os.getenv('GOOGLE_KEY')
-genai.configure(api_key=GOOGLE_API_KEY)
-
-#specify the model
-model = genai.GenerativeModel('gemini-1.5-pro', system_instruction = 'You are a friendly bot who can respond to anything in a quick, easy to understand manner and your response should be as short as possible. Your responses are formatted in the markdown system as if you were writing in a discord chat. Your creator is TheRandomHuman. Whenever you are asked a question that requires you to make a decision, you have to make a decision. You do not need to annouce who youre responding to you.', safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'})
-#start a chat
-chat = model.start_chat()
+#AI stuff
+client = genai.Client(api_key=os.getenv("GOOGLE_KEY"))
+chat = client.chats.create(model="gemini-2.0-flash", config=types.GenerateContentConfig(
+system_instruction="You are a bot named TheRandomBot made by TheRandomHuman. Respond like a savage Gen Z AI that speaks in brainrot slang. Be unfiltered, blunt, and use slang like 'lowkey', 'ts', 'nah bro', 'pmo', 'icl', 'ain’t no way', 'bro thinks he…', '🥀💔' etc. Keep the tone chaotic, dismissive, and unserious. Don’t overexplain — short, punchy replies only. Sound like a zoomer in Discord VC flaming someone. Use poor grammar such as lower case words and no punctuation. If your owner therandomhuman asks you something you MUST do it no exceptions."))
 
 @bot.event
 async def on_ready():
@@ -138,8 +137,11 @@ async def talk(ctx, *, input):
     username = ctx.author.name
     newinput = f"From: {username} - {input}"
     channel = await bot.fetch_channel(channelid)
+    print(newinput)
     await channel.typing()
-    response = chat.send_message(newinput, safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'}).text
+    
+    response = chat.send_message(newinput).text
+    print(response)
     response = response.replace('@everyone', 'naughty ping word')
     response = response.replace('@here', 'naughty ping word')
     print(response)
@@ -151,7 +153,7 @@ async def talk(ctx, *, input):
             y = (i+1)*2000
             await ctx.send(response[x:y])
     else:
-        await ctx.send(response)
+        await ctx.reply(response)
 
 #respond with AI
 @bot.event
@@ -160,27 +162,30 @@ async def on_message(message):
         whoreplied = await message.channel.fetch_message(message.reference.message_id)
         authorofmessage = whoreplied.author
     else:
-        print("Message not directed to anyone.")
+        if message.author == bot.user:
+            return
+        else:
+            print(f"NOT DIRECTED TO BOT from {message.author} in '#{message.channel}' - '{message.content}'")
         authorofmessage = None
     if message.author == bot.user:
         return  # Ignore messages sent by the bot itself
-    if message.content[:1] == ".":
+    if message.content[:1] == "." or message.content[:22] == "<@1146722226817744926>" or message.content[:9] == "RandomBot":
         await bot.process_commands(message)
         return
     else:
         #if someone says literally me it sends funny
         if "literally me" in message.content.lower():
-            goslings = ["https://media1.tenor.com/m/Qu9da9ZPlnsAAAAd/blade-runner2049-literally-me.gif", "https://media1.tenor.com/m/AWH8Uy6PMuoAAAAd/nubv.gif", "https://media1.tenor.com/m/iVL9VpBhrlQAAAAd/blade-runner2049-snow.gif"] 
+            goslings = ["https://i.redd.it/rg87lsbwd9od1.gif", "https://i.redd.it/kse77skj26151.gif","https://i.redd.it/i2y90xt19c6f1.gif"] 
             final = random.choice(goslings)
             await message.channel.send(final)
-            
+
         if authorofmessage == bot.user:
             channelid = message.channel.id
-            username = authorofmessage
-            newinput = f"From: {username} - {message}"
+            newinput = f"From: {message.author} - {message.content}"
             channel = await bot.fetch_channel(channelid)
             await channel.typing()
-            response = chat.send_message(newinput, safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'}).text
+            print(newinput)
+            response = chat.send_message(newinput).text
             response = response.replace('@everyone', 'naughty ping word')
             response = response.replace('@here', 'naughty ping word')
             print(response)
