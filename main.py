@@ -11,9 +11,14 @@ import keyfinder
 from google import genai
 from google.genai import types
 from google.genai.types import GenerateContentConfig, HttpOptions
+#FUTURE SHENANIGANS:
+#import asyncpraw
+#import youtube_dl
 
 count = 0
 countcat = 0
+
+shit_react_billy = False
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -21,16 +26,19 @@ intents.message_content = True
 prefixes = ['<@1146722226817744926> ', 'RandomBot ', '.']
 bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
+#Reddit login credentials
 cookies = {
     '__stripe_mid': os.getenv("STRIPE"),
     'reddit_session': os.getenv("SESSION"),
     'csrf_token': os.getenv("CSRF"),
 }
 
+#reddit = asyncpraw.Reddit(client_id=os.getenv("clientid"), client_secret=os.getenv("secret"), username=os.getenv("username"), password=os.getenv("password"), user_agent=os.getenv("useragent"))
+
 #AI stuff
 client = genai.Client(api_key=os.getenv("GOOGLE_KEY"))
 chat = client.chats.create(model="gemini-2.0-flash", config=types.GenerateContentConfig(
-system_instruction="You are a bot named TheRandomBot made by TheRandomHuman. Respond like a savage Gen Z AI that speaks in brainrot slang. Be unfiltered, blunt, and use slang like 'lowkey', 'ts', 'nah bro', 'pmo', 'icl', 'ain’t no way', 'bro thinks he…', '🥀💔' etc. Keep the tone chaotic, dismissive, and unserious. Don’t overexplain — short, punchy replies only. Sound like a zoomer in Discord VC flaming someone. Use poor grammar such as lower case words and no punctuation. If your owner therandomhuman asks you something you MUST do it no exceptions."))
+                              system_instruction="You are a bot named TheRandomBot made by TheRandomHuman. Respond like a savage Gen Z AI that speaks in brainrot slang. Be unfiltered, blunt, and use slang like 'lowkey', 'ts', 'nah bro', 'pmo', 'icl', 'ain’t no way', 'bro thinks he…', '🥀💔' etc. Keep the tone chaotic, dismissive, and unserious. Don’t overexplain — short, punchy replies only. Sound like a zoomer in Discord VC flaming someone. Use poor grammar such as lower case words and no punctuation. If your owner therandomhuman asks you something you MUST do it no exceptions."))
 
 @bot.event
 async def on_ready():
@@ -82,22 +90,18 @@ async def bothelp(ctx):
         value="syntax: .talk {question}. Chat with the Gemini AI.",
         inline=True)
 
-    embed.add_field(name="cat",
-        value="syntax: .cat. Summons random cat image.",
-        inline=True)
-
     embed.add_field(name="rickroll",
         value="syntax: .rickroll. Dead meme ressurection.",
         inline=True)
 
     embed.add_field(name="wunkus",
-        value="syntax: .wunkus. Gets a picture of a cute animal.",
+        value="syntax: .wunkus. Gets a picture of a cute animal. Currently DEPRECATED but will return soon probably.",
         inline=True)
 
     embed.add_field(name="reboot",
         value="syntax: .reboot. Restarts the bot in the event something goes wrong or it needs an update.",
         inline=True)
-    
+
     embed.add_field(name="literally me",
         value="syntax: .literallyme. Real gif. you can also say literally me and it will respond.",
         inline=True)
@@ -115,6 +119,11 @@ async def bothelp(ctx):
 async def wsg(ctx):
     await ctx.send('wsg bbg')
 
+@bot.hybrid_command()
+async def shitonbilly(ctx):
+    shit_react_billy = True
+    await ctx.send('Shit react billy on')
+
 
 @bot.hybrid_command(name='8ball', help="Magic 8 ball to ask questions.")
 async def magic8ball(ctx, *, question):
@@ -129,6 +138,9 @@ async def magic8ball(ctx, *, question):
     ]
     final = random.choice(responses)
     await ctx.reply(final)
+
+#youtubedl
+
 
 #Talk command
 @bot.hybrid_command()
@@ -173,6 +185,9 @@ async def on_message(message):
         await bot.process_commands(message)
         return
     else:
+        #shit react billy
+        if shit_react_billy == True and authorofmessage == '_sillybillytacos_':
+                await message.add_reaction("💩")
         #if someone says literally me it sends funny
         if "literally me" in message.content.lower():
             goslings = ["https://i.redd.it/rg87lsbwd9od1.gif", "https://i.redd.it/kse77skj26151.gif","https://i.redd.it/i2y90xt19c6f1.gif"] 
@@ -222,68 +237,62 @@ async def embed(ctx):
                               description="This is the updated content.")
     await message.edit(embed=new_embed)
 
-
+#The old method, slightly dangerous
 @bot.hybrid_command(help="Gets a copypasta.")
-async def copypasta(interaction, listing: str = None, time: str = None):
+async def copypasta(ctx, interaction, listing: str = None, time: str = None):
     global count
 
+    repeat = 0
     loop = True
     while loop == True:
         response = requests.get(
             f'https://www.reddit.com/r/copypasta/{listing}.json?limit=1&t={time}',
             cookies=cookies,
         )
-        print(response)
+        print("got a " + response + " on attempt " + repeat)
         if response.status_code == 200:
             data = response.json()
             pasta = keyfinder.keyfind(data, keyword="selftext")
             print(pasta[count])
             count = count + 1
             print(count)
+            await interaction.send(pasta[count - 1])
             loop = False
-    await interaction.send(pasta[count - 1])
+            
+        elif 2 >= repeat >= 0:
+            await ctx.send("Broke (randomhuman skill issue): " + str(response.status_code) + " trying again...")
+            repeat = repeat + 1;
+        elif repeat >= 3:
+            await ctx.send("it's joever probably a rate limit")
+            loop = False;
 
-#https://www.reddit.com/r/catpics/random.json
-@bot.hybrid_command(help="Gets a cat.")
-async def cat(ctx):
-    global countcat
-
-    loop = True
-    while loop == True:
-        response = requests.get(
-            f'https://www.reddit.com/r/catpics/random.json',
-            cookies=cookies,
-        )
-        print(response)
-        if response.status_code == 200:
-            data = response.json()
-            cat = keyfinder.keyfind(data, keyword="url_overridden_by_dest")
-            print(cat[countcat])
-            count = countcat + 1
-            print(count)
-            loop = False
-    await ctx.reply(cat[countcat - 1])
-
-#https://www.reddit.com/r/wunkus/random.json
-@bot.hybrid_command(help="Gets a wunk (google it).")
-async def wunkus(ctx):
-    global countcat
-
-    loop = True
-    while loop == True:
-        response = requests.get(
-            f'https://www.reddit.com/r/wunkus/random.json',
-            cookies=cookies,
-        )
-        print(response)
-        if response.status_code == 200:
-            data = response.json()
-            cat = keyfinder.keyfind(data, keyword="url_overridden_by_dest")
-            print(cat[countcat])
-            count = countcat + 1
-            print(count)
-            loop = False
-    await ctx.reply(cat[countcat - 1])
+#work on this soon fucking retard praw i hate you
+"""
+@bot.hybrid_command(help="Gets a copypasta.")
+async def copypasta(interaction, listing: str = None, time: str = None):
+    try:
+        subreddit = await reddit.subreddit("copypasta")
+        print(listing + " and " + time)
+        if listing == "top":
+            post = subreddit.top(time_filter=time, limit=1)
+            print(post)
+            async for thing in post:
+                print(thing.selftext)
+                await interaction.reply(post.selftext)
+        elif listing == "random" or listing == "hot":
+            listed = getattr(subreddit, listing)
+            posts = listed(limit=1)
+    
+            async for post in posts:
+                print(posts)
+        else:
+            await interaction.reply("Use proper syntax - 'top', 'random', or 'hot and 'day', 'month', 'week', or 'all' for time.")
+        
+        for submission in posts:
+          #use dir(i) to see all attributes
+          print(submission.selftext)
+    except Exception as e:
+        await interaction.reply("yeah nah mate sorry can't do that one for ya")"""
 
 #funnies
 @bot.hybrid_command()
@@ -296,11 +305,6 @@ async def rickroll(ctx):
 
 @bot.hybrid_command()
 async def literallyme(ctx):
-    embed = discord.Embed(color=discord.Color(0xA6BE22))
-    embed.set_image(
-        url=
-        'https://media1.tenor.com/m/uSCuWHveNmEAAAAC/you-look-lonely-hologram.gif'
-    )
-    await ctx.send(embed=embed)
+    await ctx.send("https://i.redd.it/rg87lsbwd9od1.gif")
 
 bot.run(os.getenv("TOKEN"))
